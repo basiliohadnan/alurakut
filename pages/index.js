@@ -43,11 +43,7 @@ function ProfileRelationsBox(property) {
 
 export default function Home() {
   const gitHubUser = 'basiliohadnan';
-  const [comunidades, setComunidades] = React.useState([{
-    id: new Date().toISOString(),
-    title: 'Eu odeio acordar cedo',
-    image: 'https://pbs.twimg.com/profile_images/143696361/avatar_400x400.jpg'
-  }]);
+  const [comunidades, setComunidades] = React.useState([]);
   // const comunidades = comunidades[0];
   // const alteradorDeComunidades = comunidades[1];
   // console.log('Nosso teste:', comunidades[0]);
@@ -69,7 +65,34 @@ export default function Home() {
     .then(function (respostaCompleta) {
       setSeguidores(respostaCompleta);
     })
+
+  //API GraphQL
+    fetch('https://graphql.datocms.com/', {
+      method: 'POST',
+      headers: {
+        'Authorization': '1132d2fe1cc2309a8372c960f10b99',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({ "query": `query {
+        allCommunities{
+          title
+          id
+          imageUrl
+          creatorSlug
+        }
+      }` })
+     })
+     .then((response) => response.json())
+     .then((respostaCompleta) => {
+       const comunidadesVindasDoDato = respostaCompleta.data.allCommunities;
+       console.log(comunidadesVindasDoDato)
+       setComunidades(comunidadesVindasDoDato)
+     })
   }, [])
+
+
+
 
   // console.log('Seguidores antes do return: ' + seguidores);
     //1. criar um box que vai ter um map baseado nos itens do array
@@ -139,8 +162,8 @@ export default function Home() {
               {comunidades.map((itemAtual) => {
                 return (
                   <li key={itemAtual.id}>
-                    <a href={`/users/${itemAtual.title}`}>
-                      <img src={itemAtual.image} />
+                    <a href={`/communities/${itemAtual.id}`}>
+                      <img src={itemAtual.imageUrl} />
                       <span>{itemAtual.title}</span>
                     </a>
                   </li>
