@@ -4,14 +4,14 @@ import Box from '../src/components/Box';
 import { AlurakutMenu, AlurakutProfileSidebarMenuDefault, OrkutNostalgicIconSet } from '../src/lib/AlurakutCommons';
 import { ProfileRelationsBoxWrapper } from '../src/components/ProfileRelations';
 
-function ProfileSideBar(property){
+function ProfileSideBar(prop){
   return (
     <Box as="aside">
-    <img src={`https://github.com/${property.gitHubUser}.png`} style={{borderRadius: '8px'}}/>
+    <img src={`https://github.com/${prop.gitHubUser}.png`} style={{borderRadius: '8px'}}/>
     <hr/>
     <p>
-    <a className="boxLink" href={`https://github.com/${property.gitHubUser}`}>
-      @{property.gitHubUser}
+    <a className="boxLink" href={`https://github.com/${prop.gitHubUser}`}>
+      @{prop.gitHubUser}
     </a>
     </p>
     <hr/>
@@ -20,24 +20,24 @@ function ProfileSideBar(property){
   )
 }
 
-function ProfileRelationsBox(property) {
+function ProfileRelationsBox(prop) {
   return (
   <ProfileRelationsBoxWrapper>
   <h2 className="smallTitle">
-    {property.title} ({property.items.length})
+    {prop.title} ({prop.items.length})
     </h2>
-  <ul>
-        {/* {seguidores.map((itemAtual) => {
+    <ul>
+        {prop.items.map((itemAtual) => {
           return (
             <li key={itemAtual.id}>
-              <a href={`/users/${itemAtual.title}`}>
-                <img src={itemAtual.image} />
-                <span>{itemAtual.title}</span>
+              <a href={itemAtual.html_url}>
+                <img src={itemAtual.avatar_url}/>
+                <span>{itemAtual.login}</span>
               </a>
             </li>
           )
-        })} */}
-      </ul>
+        })}
+    </ul>
   </ProfileRelationsBoxWrapper>)
 }
 
@@ -58,11 +58,12 @@ export default function Home() {
 
     //0. pegar array de dados do github
   React.useEffect(function (){
-    fetch('https://api.github.com/users/basiliohadnan/followers')
+    fetch(`https://api.github.com/users/${gitHubUser}/followers`)
     .then(function (respostaDoServidor) {
       return respostaDoServidor.json();
     })
     .then(function (respostaCompleta) {
+      // console.log('Dados do GitHub: ', respostaCompleta);
       setSeguidores(respostaCompleta);
     })
 
@@ -86,7 +87,7 @@ export default function Home() {
      .then((response) => response.json())
      .then((respostaCompleta) => {
        const comunidadesVindasDoDato = respostaCompleta.data.allCommunities;
-       console.log(comunidadesVindasDoDato)
+      //  console.log('comunidadesVindasDoDato: ', comunidadesVindasDoDato)
        setComunidades(comunidadesVindasDoDato)
      })
   }, [])
@@ -102,9 +103,11 @@ export default function Home() {
     <>
       <AlurakutMenu githubUser={gitHubUser}/>
       <MainGrid>
+      {/* Área de perfil */}
         <div className="profileArea" style={{gridArea: 'profileArea'}}>
         <ProfileSideBar gitHubUser={gitHubUser}/>
         </div>
+      {/* Área de boas vindas */}
         <div className="welcomeArea" style={{gridArea: 'welcomeArea'}}>
         <Box>
           <h1 className="title">
@@ -164,8 +167,8 @@ export default function Home() {
           </form>
         </Box>
         </div>
+        {/* Área de relações */}
         <div className="profileRelationsArea" style={{gridArea: 'profileRelationsArea'}}>
-        <ProfileRelationsBox title="Seguidores" items={seguidores}/>
         <ProfileRelationsBoxWrapper>
         <h2 className="smallTitle">
             Comunidades ({comunidades.length})
@@ -183,11 +186,11 @@ export default function Home() {
               })}
             </ul>
         </ProfileRelationsBoxWrapper>
+        <ProfileRelationsBox title="Seguimores" items={seguidores}/>
         <ProfileRelationsBoxWrapper>
           <h2 className="smallTitle">
-            Rede ({pessoasFavoritas.length})
+            Seguindo ({pessoasFavoritas.length})
           </h2>
-
           <ul>
               {pessoasFavoritas.map((itemAtual) => {
                 return (
