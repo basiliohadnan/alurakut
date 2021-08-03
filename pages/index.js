@@ -121,8 +121,8 @@ export default function Home() {
             e.preventDefault();
             const dadosDoForm = new FormData(e.target);
 
-            console.log('Campo: ', dadosDoForm.get('title'));
-            console.log('Campo: ', dadosDoForm.get('image'));
+            console.log('Título: ', dadosDoForm.get('title'));
+            console.log('Imagem: ', dadosDoForm.get('image'));
 
             const comunidade = {
               title: dadosDoForm.get('title'),
@@ -139,7 +139,7 @@ export default function Home() {
             })
             .then(async (response) => {
               const dados = await response.json();
-              console.log(dados.registroCriado);
+              console.log("Comunidade criada: ", dados.registroCriado);
               const comunidade = dados.registroCriado;
               const comunidadesAtualizadas = [...comunidades, comunidade];
               setComunidades(comunidadesAtualizadas);
